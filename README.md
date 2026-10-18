@@ -1,12 +1,18 @@
-# Mapy zagrożeń OSP
+# Mapa zagrożeń i zasobów OSP
 
-Interaktywna mapa do wspólnej pracy pięciu jednostek OSP gminy Świątniki Górne.
+Interaktywne mapy do samodzielnego zgłaszania zagrożeń, zasobów i ważnych punktów przez strażaków pięciu jednostek OSP gminy Świątniki Górne. Wyniki zbiera koordynator.
 
 **Działająca aplikacja:** https://karolhuzarski-maker.github.io/mapy-osp/
 
 ## Dla strażaków
 
-Wybierz swoją OSP, kategorię zagrożenia, wskaż miejsce na mapie, dodaj opis i wybierz **Zapisz zgłoszenie**. Uczestnicy nie muszą zakładać kont. Dostępne są punkty, obszary, odcinki, wspólne notatki i zestawienie CSV.
+Wybierz swoją OSP, kategorię oznaczenia, wskaż miejsce na mapie i wybierz **Wyślij zgłoszenie**. Opis jest opcjonalny; warto dopisać, co dokładnie występuje w tym miejscu i kiedy. Uczestnicy nie muszą zakładać kont. Dostępne są punkty, obszary, odcinki, własne notatki i zestawienie CSV.
+
+Zagrożenia: P — podtopienia, O — osuwiska, W — wiatr i drzewa, A — awarie, D — utrudnienia drogowe, I — inne zagrożenie. Zasoby i ważne punkty: H — hydrant, U — ujęcie wody, Z — inny zasób / własny punkt. Przy H/U warto opisać dostęp i znany stan; samo zgłoszenie nie potwierdza sprawności. Przy Z warto wyjaśnić, co oznacza punkt, w czym może pomóc i jak do niego dotrzeć.
+
+Każdy uczestnik widzi wyłącznie swoje zgłoszenia i notatki, a koordynator ma dostęp do wszystkich wyników. Zapis zgłoszenia od razu przekazuje je koordynatorowi. Zwykły link do OSP nie udostępnia wpisów autora.
+
+Mapa uczestnika jest przypisana do sesji w tej przeglądarce, ważnej 30 dni. Na wspólnym urządzeniu użyj **Nowy uczestnik**, zanim rozpocznie pracę kolejna osoba. Ta funkcja uruchamia nowy, pusty zestaw map wszystkich OSP; wcześniejsze zgłoszenia pozostają u koordynatora. Wyczyszczenie danych przeglądarki lub wygaśnięcie sesji kończy możliwość edycji starych zgłoszeń przez uczestnika, ale nie usuwa ich z bazy.
 
 Jednostki: OSP Ochojno, OSP Olszowice, OSP Rzeszotary, OSP Świątniki Górne i OSP Wrząsowice.
 
@@ -40,7 +46,7 @@ pnpm build
 pnpm build:pages
 ```
 
-Testy integracyjne używają tymczasowej bazy SQLite oraz dwóch sesji uczestników. Sprawdzają między innymi trwałość zapisu po ponownym otwarciu bazy, własność zgłoszeń, konflikty równoczesnych zmian, usuwanie i cofanie, uprawnienia koordynatora oraz walidację danych.
+Testy integracyjne używają tymczasowej bazy SQLite i niezależnych sesji uczestników. Sprawdzają izolację zgłoszeń, liczników i notatek, aktualizację istniejącej bazy bez utraty danych, trwałość zapisu, konflikty zmian, usuwanie i cofanie, uprawnienia koordynatora oraz zgłoszenia z pustym lub krótkim opisem. Test klienta sprawdza zmianę uczestnika, spóźnione odpowiedzi oraz błędy przechowywania sesji.
 
 ## Oryginalne mapy i daty
 
