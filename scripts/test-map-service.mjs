@@ -4,6 +4,7 @@ import {readFileSync,mkdtempSync,rmSync,readdirSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {handleMapRequest} from '../lib/map-service.ts';
+import {handleMapHttpRequest,PUBLIC_MAP_ORIGIN} from '../lib/map-http.ts';
 const dir=mkdtempSync(join(tmpdir(),'osp-map-tests-'));const file=join(dir,'map.sqlite');
 let sql=new DatabaseSync(file);sql.exec(readFileSync(join('drizzle',readdirSync('drizzle').find(x=>x.endsWith('.sql'))),'utf8'));
 const db={prepare(query){let values=[];return {bind(...v){values=v;return this;},async first(){return sql.prepare(query).get(...values)??null;},async all(){return{results:sql.prepare(query).all(...values)};},async run(){return sql.prepare(query).run(...values);}};}};
@@ -49,6 +50,29 @@ try{
  eq(rowsAfter.hazards.map(x=>x.description),rowsBefore.hazards.map(x=>x.description));eq(rowsAfter.notes.body,'Sprawdzić przepust i dojazd.');
  eq(rowsAfter.counts.find(x=>x.unit==='ochojno').count,3);
  eq((await request('POST',{...sample,points:[{x:null,y:.4}]},a.cookie)).status,400);
- console.log(JSON.stringify({passed:checks,persistence:'reopened SQLite database',sessions:2,checks:'shared reads, ownership, unit access, note conflicts, revisions, geometry, origin, delete/undo, coordinator'}));
+ async function cross(method,payload,token='',origin=PUBLIC_MAP_ORIGIN,cookie='',ctx={}){
+  const headers={'Origin':origin,'Sec-Fetch-Site':'cross-site'};
+  if(token)headers['X-OSP-Session']=token;
+  if(cookie)headers.Cookie=cookie;
+  if(method!=='GET')headers['Content-Type']='application/json';
+  const result=await handleMapHttpRequest(new Request('https://map.test/api/map?unit=wrzasowice',{method,headers,...(payload?{body:JSON.stringify(payload)}:{})}),db,ctx);
+  return {status:result.status,body:await result.json(),headers:result.headers};
+ }
+ const preflight=await handleMapHttpRequest(new Request('https://map.test/api/map',{method:'OPTIONS',headers:{Origin:PUBLIC_MAP_ORIGIN,'Access-Control-Request-Method':'POST','Access-Control-Request-Headers':'content-type,x-osp-session'}}),db);
+ eq(preflight.status,204);eq(preflight.headers.get('Access-Control-Allow-Origin'),PUBLIC_MAP_ORIGIN);eq(preflight.headers.get('Access-Control-Allow-Credentials'),null);
+ const badPreflight=await handleMapHttpRequest(new Request('https://map.test/api/map',{method:'OPTIONS',headers:{Origin:'https://other.test','Access-Control-Request-Method':'POST'}}),db);eq(badPreflight.status,403);
+ const extraHeader=await handleMapHttpRequest(new Request('https://map.test/api/map',{method:'OPTIONS',headers:{Origin:PUBLIC_MAP_ORIGIN,'Access-Control-Request-Method':'POST','Access-Control-Request-Headers':'authorization'}}),db);eq(extraHeader.status,403);
+ const crossJoin=await cross('POST',{op:'join',unit:'wrzasowice'});eq(crossJoin.status,200);eq(crossJoin.headers.get('set-cookie'),null);eq(crossJoin.body.sessionToken.length,64);
+ const crossSample={...sample,unit:'wrzasowice'};
+ const crossAdded=await cross('POST',crossSample,crossJoin.body.sessionToken);eq(crossAdded.status,201);
+ const crossRead=await cross('GET',null,crossJoin.body.sessionToken);eq(crossRead.body.hazards[0].canEdit,true);eq(crossRead.headers.get('Access-Control-Allow-Origin'),PUBLIC_MAP_ORIGIN);
+ const cookieRead=await cross('GET',null,'',PUBLIC_MAP_ORIGIN,a.cookie,admin);eq(cookieRead.body.isCoordinator,false);eq(cookieRead.body.hazards[0].canEdit,false);
+ eq((await cross('POST',crossSample,'',PUBLIC_MAP_ORIGIN,a.cookie,admin)).status,401);
+ const badCross=await cross('POST',crossSample,crossJoin.body.sessionToken,'https://other.test');eq(badCross.status,403);eq(badCross.headers.get('Access-Control-Allow-Origin'),null);
+ eq((await cross('PUT',{unit:'wrzasowice',body:'Ustalenia z nowego adresu.',version:0},crossJoin.body.sessionToken)).status,200);
+ eq((await cross('GET',null,crossJoin.body.sessionToken)).body.notes.body,'Ustalenia z nowego adresu.');
+ const crossDeleted=await cross('PATCH',{unit:'wrzasowice',id:crossAdded.body.hazard.id,version:1,deleted:true},crossJoin.body.sessionToken);eq(crossDeleted.status,200);
+ eq((await cross('GET',null,crossJoin.body.sessionToken)).body.hazards.length,0);
+ console.log(JSON.stringify({passed:checks,persistence:'reopened SQLite database',sessions:3,checks:'shared reads, ownership, unit access, note conflicts, revisions, geometry, origin, delete/undo, coordinator, GitHub Pages preflight and token-based cross-origin writes'}));
 }finally{sql.close();rmSync(dir,{recursive:true,force:true});}
 

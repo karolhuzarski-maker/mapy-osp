@@ -55,5 +55,6 @@ next-env.d.ts
 /outputs/
 /work/
 
-# Generated TypeScript cache
+# GitHub Pages build and TypeScript cache
+/dist-pages/
 *.tsbuildinfo

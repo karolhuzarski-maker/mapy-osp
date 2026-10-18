@@ -1,23 +1,25 @@
-# Publikowanie zmian i ciągłość danych
+# Publikowanie mapy OSP
 
-## Stan po przeniesieniu kodu
+## Adres dla strażaków
 
-- Kod jest przechowywany w repozytorium `karolhuzarski-maker/mapy-osp`.
-- Działająca aplikacja pozostaje pod adresem https://foc-mapy-osp-2026.karhuz.chatgpt.site.
-- Zgłoszenia i notatki pozostają w bazie D1 tego samego projektu Sites. Przeniesienie kodu nie jest migracją bazy.
-- Zmiany w `main` same nie publikują strony. Kontrole w GitHub Actions nie stanowią wdrożenia produkcyjnego.
+https://karolhuzarski-maker.github.io/mapy-osp/
 
-## Publikacja z pomocą ChatGPT Work
+Widok mapy działa w GitHub Pages. Nie przekierowuje użytkownika na inną domenę. Zapis i odczyt zgłoszeń odbywa się przez API istniejącej aplikacji: `https://foc-mapy-osp-2026.karhuz.chatgpt.site/api/map`.
 
-1. Wskaż to repozytorium i zleć wdrożenie zmian do istniejącej mapy OSP.
-2. Agent pobiera wybrany commit, wykonuje testy i buduje aplikację.
-3. Publikacja musi aktualizować istniejący projekt Sites wskazany w `.openai/hosting.json`. Nie należy tworzyć nowego projektu, jeżeli celem jest zachowanie tej samej bazy i adresu.
-4. Po publikacji sprawdź zapis i odczyt zgłoszeń. Próby techniczne usuń po weryfikacji.
+## Automatyczna publikacja widoku
 
-Metadane `.openai/hosting.json` identyfikują istniejący projekt i powiązanie `DB`; nie są hasłem ani kluczem. Uprawnienia wdrażania i sekrety są obsługiwane poza repozytorium.
+Zmiana w `main` uruchamia `.github/workflows/checks.yml`. Workflow instaluje zależności, wykonuje testy, sprawdza typy, buduje część serwerową do kontroli zgodności i buduje widok statyczny poleceniem `pnpm build:pages`. Udane wykonanie publikuje katalog `dist-pages` w GitHub Pages. Pull requesty uruchamiają kontrole bez publikowania.
 
-## Samodzielny hosting i automatyczne wdrożenia
+Źródło Pages w ustawieniach repozytorium musi być ustawione na **GitHub Actions**. Nie jest potrzebna własna domena ani konfiguracja DNS.
 
-Samo GitHub Pages nie uruchamia serwerowej części aplikacji ani bazy D1. Przed uruchomieniem poza Sites trzeba skonfigurować hosting Cloudflare Workers, bazę D1 i bezpieczne uwierzytelnienie koordynatora. Obecna konfiguracja korzysta z zaufanych nagłówków i punktów logowania udostępnianych przez Sites — poza tą platformą nie można traktować nagłówków wysłanych przez użytkownika jako dowodu tożsamości.
+## API i baza danych
 
-Automatyczna publikacja z GitHuba wymaga autoryzowanego połączenia z wybranym hostingiem. W tym repozytorium nie ma kluczy do hostingu ani eksportu danych produkcyjnych. Przed właściwą migracją należy wykonać kopię bazy, przenieść schemat i rekordy oraz zweryfikować uprawnienia. Samo zastosowanie plików migracji tworzy schemat, ale nie przenosi istniejących zgłoszeń.
+Zgłoszenia, notatki i sesje uczestników pozostają w bazie D1 istniejącego projektu Sites. GitHub Pages nie przechowuje danych warsztatowych. Widok korzysta z tokenu sesji w nagłówku `X-OSP-Session`; nie wymaga zewnętrznych cookies. API dopuszcza żądania przeglądarkowe wyłącznie z własnej domeny i `https://karolhuzarski-maker.github.io`. Dostęp koordynatora przez nagłówki platformy jest wyłączony dla żądań z innej domeny. Wejście koordynatora prowadzi do istniejącej aplikacji i jej logowania.
+
+Zmiany serwera (`app/api`, `lib/map-service.ts`, `lib/map-http.ts`, migracje bazy) nie są publikowane do Sites przez workflow Pages. Trzeba zlecić ich wdrożenie w ChatGPT Work do istniejącego projektu wskazanego w `.openai/hosting.json`. Należy zachować ten sam projekt, aby korzystać z obecnej bazy i adresu API. Sekrety i uprawnienia wdrażania pozostają poza repozytorium.
+
+Pliki migracji opisują schemat, ale nie zawierają zgłoszeń. Samo sklonowanie repozytorium nie kopiuje ani nie usuwa danych. Testy korzystają z oddzielnej tymczasowej bazy SQLite.
+
+## Samodzielny hosting serwera
+
+Przed uruchomieniem poza Sites trzeba skonfigurować Cloudflare Workers, bazę D1 i bezpieczne uwierzytelnianie koordynatora. Nie można ufać nagłówkom tożsamości przysłanym przez użytkownika. Migracja produkcyjnej bazy wymaga kopii danych i sprawdzenia uprawnień.

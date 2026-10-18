@@ -1,7 +1,7 @@
 import {UNITS,CATEGORIES,type Unit} from './data.ts';
 type Statement={bind:(...v:unknown[])=>Statement;first:<T=Record<string,unknown>>()=>Promise<T|null>;all:<T=Record<string,unknown>>()=>Promise<{results:T[]}>;run:()=>Promise<unknown>};
 export type Database={prepare:(sql:string)=>Statement};
-type Context={adminEmail?:string;verifiedEmail?:string|null};
+export type Context={adminEmail?:string;verifiedEmail?:string|null;allowedOrigins?:readonly string[]};
 type Row={id:number;unit:Unit;category:string;kind:string;points:string;description:string;priority:string;owner:string;created_at:number;updated_at:number;version:number;deleted:number};
 class Failure extends Error{status:number;constructor(status:number,message:string){super(message);this.status=status;}}
 const units=new Set<string>(UNITS.map(x=>x.id)),cats=new Set<string>(CATEGORIES.map(x=>x.id));
@@ -20,8 +20,10 @@ async function digest(raw:string){const b=await crypto.subtle.digest('SHA-256',n
 const clean=(r:Row,owner:string|null,admin:boolean)=>({id:r.id,unit:r.unit,category:r.category,kind:r.kind,points:JSON.parse(r.points),description:r.description,priority:r.priority,version:r.version,createdAt:r.created_at,updatedAt:r.updated_at,canEdit:admin||owner===r.owner});
 export async function handleMapRequest(req:Request,db:Database,ctx:Context={}){
  try{
-  const url=new URL(req.url),admin=!!ctx.adminEmail&&ctx.verifiedEmail?.toLowerCase()===ctx.adminEmail.toLowerCase();
-  let raw=req.headers.get('x-osp-session')?.match(/^[a-f0-9]{64}$/)?.[0]??req.headers.get('cookie')?.match(/(?:^|;\s*)osp_sid=([a-f0-9]{64})(?:;|$)/)?.[1];let owner=raw?await digest(raw):null;
+  const url=new URL(req.url),origin=req.headers.get('origin'),crossOrigin=!!origin&&origin!==url.origin,allowedCrossOrigin=crossOrigin&&!!ctx.allowedOrigins?.includes(origin!);
+  if(crossOrigin&&!allowedCrossOrigin)throw new Failure(403,'Otwórz mapę i spróbuj ponownie.');
+  const admin=!crossOrigin&&!!ctx.adminEmail&&ctx.verifiedEmail?.toLowerCase()===ctx.adminEmail.toLowerCase();
+  let raw=req.headers.get('x-osp-session')?.match(/^[a-f0-9]{64}$/)?.[0]??(crossOrigin?undefined:req.headers.get('cookie')?.match(/(?:^|;\s*)osp_sid=([a-f0-9]{64})(?:;|$)/)?.[1]);let owner=raw?await digest(raw):null;
   if(owner){const s=await db.prepare('SELECT created_at FROM sessions WHERE id=?').bind(owner).first<{created_at:number}>();if(!s||s.created_at<Date.now()-30*86400000)owner=null;}
   if(req.method==='GET'){
    const requested=url.searchParams.get('unit'),unit=requested==='all'&&admin?'all':unitValue(requested);
@@ -31,13 +33,13 @@ export async function handleMapRequest(req:Request,db:Database,ctx:Context={}){
    return json({hazards:rows.results.map(r=>clean(r,owner,admin)),counts:counts.results,notes:note??{body:'',version:0,updated_at:0},isCoordinator:admin});
   }
   if(!['POST','PATCH','PUT'].includes(req.method))return json({error:'Niedozwolona operacja.'},405);
-  if(req.headers.get('origin')!==url.origin||req.headers.get('sec-fetch-site')==='cross-site')throw new Failure(403,'Otwórz mapę i spróbuj ponownie.');
+  if((origin!==url.origin&&!allowedCrossOrigin)||(!allowedCrossOrigin&&req.headers.get('sec-fetch-site')==='cross-site'))throw new Failure(403,'Otwórz mapę i spróbuj ponownie.');
   if(!req.headers.get('content-type')?.startsWith('application/json'))throw new Failure(415,'Wymagane dane formularza.');
   const text=await req.text();if(text.length>18000)throw new Failure(413,'Wpis jest zbyt długi.');let b:Record<string,unknown>;
   try{b=JSON.parse(text);}catch{throw new Failure(400,'Nieprawidłowe dane formularza.');}
   if(!b||typeof b!=='object'||Array.isArray(b))throw new Failure(400,'Nieprawidłowe dane formularza.');const unit=unitValue(b.unit),now=Date.now();
   if(req.method==='POST'&&b.op==='join'){
-   let cookie='';if(!owner){const id=[...crypto.getRandomValues(new Uint8Array(32))].map(v=>v.toString(16).padStart(2,'0')).join('');raw=id;owner=await digest(id);await db.prepare('INSERT INTO sessions(id,created_at) VALUES(?,?)').bind(owner,now).run();cookie=`osp_sid=${id}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000${url.protocol==='https:'?'; Secure':''}`;}
+   let cookie='';if(!owner){const id=[...crypto.getRandomValues(new Uint8Array(32))].map(v=>v.toString(16).padStart(2,'0')).join('');raw=id;owner=await digest(id);await db.prepare('INSERT INTO sessions(id,created_at) VALUES(?,?)').bind(owner,now).run();cookie=crossOrigin?'':`osp_sid=${id}; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000${url.protocol==='https:'?'; Secure':''}`;}
    await db.prepare('INSERT OR IGNORE INTO memberships(session_id,unit) VALUES(?,?)').bind(owner,unit).run();return json({ok:true,sessionToken:raw},200,cookie?{'Set-Cookie':cookie}:{});
   }
   if(!owner&&!admin)throw new Failure(401,'Odśwież mapę, aby rozpocząć pracę.');

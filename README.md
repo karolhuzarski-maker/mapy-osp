@@ -2,7 +2,7 @@
 
 Interaktywna mapa do wspólnej pracy pięciu jednostek OSP gminy Świątniki Górne.
 
-**Działająca aplikacja:** https://foc-mapy-osp-2026.karhuz.chatgpt.site
+**Działająca aplikacja:** https://karolhuzarski-maker.github.io/mapy-osp/
 
 ## Dla strażaków
 
@@ -18,7 +18,7 @@ Uczestnik może poprawiać własne zgłoszenia w swojej sesji przeglądarki. Koo
 
 ## Edycja i publikacja
 
-Kod można edytować bezpośrednio na GitHubie lub w edytorze. Zmiana w repozytorium nie publikuje automatycznie obecnej strony. Procedurę wdrażania i ograniczenia opisuje [DEPLOYMENT.md](DEPLOYMENT.md).
+Kod można edytować bezpośrednio na GitHubie lub w edytorze. Zapis zmian do `main` uruchamia testy, budowanie i publikację widoku mapy w GitHub Pages. Serwer API i baza danych działają osobno w istniejącym projekcie Sites; zmiany kodu serwera wymagają jego osobnego wdrożenia. Szczegóły opisuje [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Uruchomienie lokalne
 
@@ -37,6 +37,7 @@ Zwykły klon korzysta z profilu `portable`. Lokalna baza D1 jest oddzielna od pr
 pnpm test
 pnpm typecheck
 pnpm build
+pnpm build:pages
 ```
 
 Testy integracyjne używają tymczasowej bazy SQLite oraz dwóch sesji uczestników. Sprawdzają między innymi trwałość zapisu po ponownym otwarciu bazy, własność zgłoszeń, konflikty równoczesnych zmian, usuwanie i cofanie, uprawnienia koordynatora oraz walidację danych.
