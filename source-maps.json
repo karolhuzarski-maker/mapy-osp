@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "ochojno",
+    "name": "Ochojno",
+    "image": "/maps/ochojno.png",
+    "sha256": "6696bf00ee2af091d09471c7ac2f9a515d6898b981cc4c0c902e72f7c66273a6",
+    "notes": "Mapa zagrożeń – OSP Ochojno\nMapa zagrożeń - OSP Ochojno. Kadr rozszerzony na północ, obejmuje sprawdzony punkt Jagiellońskiej. Kadr jest wyborem widoku i nie określa granic miejscowości ani rejonu OSP. Oficjalny dokument: Studium uwarunkowań i kierunków zagospodarowania przestrzennego Miasta i Gminy Świątniki Górne, załącznik graficzny 2.1 do uchwały XXIX/235/2013 z 29.01.2013. Źródło BIP: https://bip.malopolska.pl/umigswiatnikigorne/Article/get/id,457795.html ; oryginał PDF: https://bip.malopolska.pl/api/files/561734 . Podkład topograficzny według metadanych GML: 24.05.2000. CropBox PDF od lewego dolnego rogu: [499, 1061.00472, 1855, 2026.00472]. Tło slajdu wyrenderowano w 400 dpi. Zachowano orientację i proporcje dokumentu. Rozjaśnienie przez jednolitą białą warstwę o kryciu 24%. Nie rekonstruowano ani nie dorysowano geografii. Targeo użyto wyłącznie do sprawdzenia zakresu kadru, nie jako podkładu. Zmieniono 18.10.2026.\nOficjalna strona Gminy: https://swiatniki-gorne.pl/zalatw-sprawe/katalog-spraw/gospodarka-przestrzenna-i-nieruchomosci/n,287498,dane-przestrzenne.html\nGML: https://cdn02.sulimo.pl/media/userfiles/swiatniki-gorne.pl/pobierz/ZbiorAPP_Studium_swiatniki_10.gml\nTIFF: https://rastry.gison.pl/tiff/swiatniki_92/Z01_2013_235_XXIX_studium_uwarunkowania_nowy.tif\nPełny oryginał PDF w BIP: https://bip.malopolska.pl/api/files/561734\nStudium XXIX/235/2013 z 29.01.2013. Mapa topograficzna według GML: 24.05.2000. Wersja GML 27.01.2023. Pobrano 17.10.2026.\nGeometria i orientacja mapy zachowane. Nie wyznaczono rejonów OSP. Kadr na tym slajdzie nie jest granicą miejscowości ani rejonu operacyjnego. Oznaczenia źródłowe opisuje oryginalna legenda: https://administracja.gison.pl/mpzp-public/swiatniki/legendy/Z01_2013_235_XXIX_studium_uwarunkowania_legenda.png"
+  },
+  {
+    "slug": "olszowice",
+    "name": "Olszowice",
+    "image": "/maps/olszowice.png",
+    "sha256": "a17b475056169c628a62ef965ef5d04813c41004d9812130430b111352f2f711",
+    "notes": "Mapa zagrożeń – OSP Olszowice\nPowiększony kadr. Współrzędne prostokąta w pikselach źródła 2122 × 2407: 0, 1380, 1438, 2407. To wybór widoku, nie granica geograficzna.\nOficjalna strona Gminy: https://swiatniki-gorne.pl/zalatw-sprawe/katalog-spraw/gospodarka-przestrzenna-i-nieruchomosci/n,287498,dane-przestrzenne.html\nGML: https://cdn02.sulimo.pl/media/userfiles/swiatniki-gorne.pl/pobierz/ZbiorAPP_Studium_swiatniki_10.gml\nTIFF: https://rastry.gison.pl/tiff/swiatniki_92/Z01_2013_235_XXIX_studium_uwarunkowania_nowy.tif\nPełny oryginał PDF w BIP: https://bip.malopolska.pl/api/files/561734\nStudium XXIX/235/2013 z 29.01.2013. Mapa topograficzna według GML: 24.05.2000. Wersja GML 27.01.2023. Pobrano 17.10.2026.\nGeometria i orientacja mapy zachowane. Nasycenie 35%, jednolite rozjaśnienie 12% bieli. Nie wyznaczono rejonów OSP. Kadr na tym slajdzie nie jest granicą miejscowości ani rejonu operacyjnego. Oznaczenia źródłowe opisuje oryginalna legenda: https://administracja.gison.pl/mpzp-public/swiatniki/legendy/Z01_2013_235_XXIX_studium_uwarunkowania_legenda.png"
+  },
+  {
+    "slug": "rzeszotary",
+    "name": "Rzeszotary",
+    "image": "/maps/rzeszotary.png",
+    "sha256": "b986224cfb061624fadf3b40cfcea2c8f2678ec18a421efff6a6c0a9bed4a33b",
+    "notes": "Mapa zagrożeń – OSP Rzeszotary\nPowiększony kadr. Współrzędne prostokąta w pikselach źródła 2122 × 2407: 700, 650, 2122, 1666. To wybór widoku, nie granica geograficzna.\nOficjalna strona Gminy: https://swiatniki-gorne.pl/zalatw-sprawe/katalog-spraw/gospodarka-przestrzenna-i-nieruchomosci/n,287498,dane-przestrzenne.html\nGML: https://cdn02.sulimo.pl/media/userfiles/swiatniki-gorne.pl/pobierz/ZbiorAPP_Studium_swiatniki_10.gml\nTIFF: https://rastry.gison.pl/tiff/swiatniki_92/Z01_2013_235_XXIX_studium_uwarunkowania_nowy.tif\nPełny oryginał PDF w BIP: https://bip.malopolska.pl/api/files/561734\nStudium XXIX/235/2013 z 29.01.2013. Mapa topograficzna według GML: 24.05.2000. Wersja GML 27.01.2023. Pobrano 17.10.2026.\nGeometria i orientacja mapy zachowane. Nasycenie 35%, jednolite rozjaśnienie 12% bieli. Nie wyznaczono rejonów OSP. Kadr na tym slajdzie nie jest granicą miejscowości ani rejonu operacyjnego. Oznaczenia źródłowe opisuje oryginalna legenda: https://administracja.gison.pl/mpzp-public/swiatniki/legendy/Z01_2013_235_XXIX_studium_uwarunkowania_legenda.png"
+  },
+  {
+    "slug": "swiatniki-gorne",
+    "name": "Świątniki Górne",
+    "image": "/maps/swiatniki-gorne.png",
+    "sha256": "c02f95393a5437d2fa2d8c40b33c6db72108e31bfc72045497aa5a3b6339fc70",
+    "notes": "Mapa zagrożeń – OSP Świątniki Górne\nPowiększony kadr. Współrzędne prostokąta w pikselach źródła 2122 × 2407: 380, 1050, 1810, 2071. To wybór widoku, nie granica geograficzna.\nOficjalna strona Gminy: https://swiatniki-gorne.pl/zalatw-sprawe/katalog-spraw/gospodarka-przestrzenna-i-nieruchomosci/n,287498,dane-przestrzenne.html\nGML: https://cdn02.sulimo.pl/media/userfiles/swiatniki-gorne.pl/pobierz/ZbiorAPP_Studium_swiatniki_10.gml\nTIFF: https://rastry.gison.pl/tiff/swiatniki_92/Z01_2013_235_XXIX_studium_uwarunkowania_nowy.tif\nPełny oryginał PDF w BIP: https://bip.malopolska.pl/api/files/561734\nStudium XXIX/235/2013 z 29.01.2013. Mapa topograficzna według GML: 24.05.2000. Wersja GML 27.01.2023. Pobrano 17.10.2026.\nGeometria i orientacja mapy zachowane. Nasycenie 35%, jednolite rozjaśnienie 12% bieli. Nie wyznaczono rejonów OSP. Kadr na tym slajdzie nie jest granicą miejscowości ani rejonu operacyjnego. Oznaczenia źródłowe opisuje oryginalna legenda: https://administracja.gison.pl/mpzp-public/swiatniki/legendy/Z01_2013_235_XXIX_studium_uwarunkowania_legenda.png"
+  },
+  {
+    "slug": "wrzasowice",
+    "name": "Wrząsowice",
+    "image": "/maps/wrzasowice.png",
+    "sha256": "9b68c36f904ee80302f7f4bb0506cbcf30558579c713bf8e89d6edacc1e83226",
+    "notes": "Mapa zagrożeń – OSP Wrząsowice\nPowiększony kadr. Współrzędne prostokąta w pikselach źródła 2122 × 2407: 280, 0, 1650, 978. To wybór widoku, nie granica geograficzna.\nOficjalna strona Gminy: https://swiatniki-gorne.pl/zalatw-sprawe/katalog-spraw/gospodarka-przestrzenna-i-nieruchomosci/n,287498,dane-przestrzenne.html\nGML: https://cdn02.sulimo.pl/media/userfiles/swiatniki-gorne.pl/pobierz/ZbiorAPP_Studium_swiatniki_10.gml\nTIFF: https://rastry.gison.pl/tiff/swiatniki_92/Z01_2013_235_XXIX_studium_uwarunkowania_nowy.tif\nPełny oryginał PDF w BIP: https://bip.malopolska.pl/api/files/561734\nStudium XXIX/235/2013 z 29.01.2013. Mapa topograficzna według GML: 24.05.2000. Wersja GML 27.01.2023. Pobrano 17.10.2026.\nGeometria i orientacja mapy zachowane. Nasycenie 35%, jednolite rozjaśnienie 12% bieli. Nie wyznaczono rejonów OSP. Kadr na tym slajdzie nie jest granicą miejscowości ani rejonu operacyjnego. Oznaczenia źródłowe opisuje oryginalna legenda: https://administracja.gison.pl/mpzp-public/swiatniki/legendy/Z01_2013_235_XXIX_studium_uwarunkowania_legenda.png"
+  }
+]
