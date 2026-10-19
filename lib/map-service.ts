@@ -6,7 +6,7 @@ type Row={id:number;unit:Unit;category:string;kind:string;points:string;descript
 class Failure extends Error{status:number;constructor(status:number,message:string){super(message);this.status=status;}}
 const units=new Set<string>(UNITS.map(x=>x.id)),cats=new Set<string>(CATEGORIES.map(x=>x.id));
 const json=(data:unknown,status=200,headers:Record<string,string>={})=>new Response(JSON.stringify(data),{status,headers:{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',...headers}});
-const unitValue=(u:unknown)=>{if(typeof u!=='string'||!units.has(u))throw new Failure(400,'Wybierz właściwą jednostkę OSP.');return u as Unit;};
+const unitValue=(u:unknown)=>{if(typeof u!=='string'||!units.has(u))throw new Failure(400,'Wybierz właściwą miejscowość.');return u as Unit;};
 function validateHazard(b:Record<string,unknown>){
  const unit=unitValue(b.unit),category=String(b.category),kind=String(b.kind);
  if(!cats.has(category)||!['point','area','line'].includes(kind))throw new Failure(400,'Wybierz kategorię zgłoszenia i rodzaj oznaczenia.');
@@ -51,7 +51,7 @@ export async function handleMapRequest(req:Request,db:Database,ctx:Context={}){
    await db.prepare('INSERT OR IGNORE INTO memberships(session_id,unit) VALUES(?,?)').bind(owner,unit).run();return json({ok:true,sessionToken:raw,participantId:participantId(owner)},200,cookie?{'Set-Cookie':cookie}:{});
   }
   if(!owner&&!admin)throw new Failure(401,'Odśwież mapę, aby rozpocząć pracę.');
-  if(!admin&&!await db.prepare('SELECT unit FROM memberships WHERE session_id=? AND unit=?').bind(owner,unit).first())throw new Failure(403,'Najpierw otwórz mapę tej jednostki.');
+  if(!admin&&!await db.prepare('SELECT unit FROM memberships WHERE session_id=? AND unit=?').bind(owner,unit).first())throw new Failure(403,'Najpierw otwórz mapę tej miejscowości.');
   if(req.method==='POST'){
    const h=validateHazard(b),count=await db.prepare('SELECT COUNT(*) AS n FROM hazards WHERE owner=? AND created_at>?').bind(owner,now-3600000).first<{n:number}>();if((count?.n??0)>=100)throw new Failure(429,'Zapisano już wiele zgłoszeń. Spróbuj ponownie później.');
    const row=await db.prepare('INSERT INTO hazards(unit,category,kind,points,description,priority,owner,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?) RETURNING *').bind(h.unit,h.category,h.kind,h.points,h.description,h.priority,owner??'coordinator',now,now).first<Row>();if(!row)throw new Error('Insert failed');return json({hazard:clean(row,owner,admin)},201);
